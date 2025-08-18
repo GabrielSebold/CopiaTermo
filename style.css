@@ -1,0 +1,39 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #8b4343;
+  margin: 0;
+  padding: 20px;
+}
+
+#grid {
+  display: grid;
+  grid-template-rows: repeat(6, auto);
+  gap: 5px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.linha {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  gap: 5px;
+}
+
+.celula {
+  width: 50px;
+  height: 50px;
+  background-color: rgb(29, 19, 19);
+  border: 3px solid #ccc;
+  font-size: 2rem;
+  text-align: center;
+  line-height: 60px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  color: white;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
