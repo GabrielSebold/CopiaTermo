@@ -37,3 +37,14 @@ body {
   justify-content: center;
 }
 
+.certa {
+    background-color: green;
+}
+
+.quase {
+    background-color: gold;
+}
+
+.errada {
+    background-color: gray;
+}
