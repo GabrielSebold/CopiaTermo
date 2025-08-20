@@ -1,22 +1,21 @@
 body {
   font-family: sans-serif;
-  text-align: center;
-  background: #8b4343;
-  margin: 0;
-  padding: 20px;
+  background-color: #121213;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
 }
 
 #grid {
-  display: grid;
-  grid-template-rows: repeat(6, auto);
+  display: flex;
+  flex-direction: column;
   gap: 5px;
-  justify-content: center;
-  margin-top: 20px;
 }
 
 .linha {
-  display: grid;
-  grid-template-columns: repeat(5, 60px);
+  display: flex;
   gap: 5px;
 }
 
@@ -38,13 +37,34 @@ body {
 }
 
 .certa {
-    background-color: green;
+  background-color: green;
+  border-color: green;
 }
 
 .quase {
-    background-color: gold;
+  background-color: goldenrod;
+  border-color: goldenrod;
 }
 
 .errada {
-    background-color: gray;
+  background-color: #444;
+  border-color: #444;
+}
+
+#mensagem {
+  font-weight: bold;
+  text-align: center;
+  margin: 10px;
+}
+
+#mensagem.erro {
+  color: red;
+}
+
+#mensagem.sucesso {
+  color: green;
+}
+
+#mensagem.info {
+  color: orange;
 }

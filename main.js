@@ -19,14 +19,22 @@ function atualizarLinha() {
     }
 }
 
-document.getElementById("iniciar").addEventListener("click", () => {
-  criarGrid();
-  palavraAtual.length = 0;
-  event.target.blur();
+document.addEventListener("DOMContentLoaded", () => {
+    criarGrid();
+    linhaAtual = 0;
+    palavraAtual = [];
+    mostrarMensagem("");
 });
+
 //====================================================
 
 //====================================================
+
+function mostrarMensagem(texto, tipo = "info") {
+    const msg = document.getElementById("mensagem");
+    msg.textContent = texto;
+    msg.className = tipo;
+}
 
 function handler(event) {
     const letra = event.key.toUpperCase();
@@ -52,10 +60,15 @@ function handler(event) {
         aplicarCoresNaLinha(linhaAtual, resultado);
         
         if (resultado.every(item => item === "certa")) {
+            mostrarMensagem("Parabéns! Você acertou!")
             document.removeEventListener("keydown", handler)
         }
 
         linhaAtual++;
+        if (linhaAtual >= 6 && resultado.every(item => item != "certa")) {
+            mostrarMensagem(`Fim de jogo! A palavra era ${palavraSecreta}`);
+            return;
+        }
         palavraAtual.length = 0;
 
     } else if (letra === "BACKSPACE") {
@@ -66,6 +79,7 @@ function handler(event) {
 
     }
 };
+
 //====================================================
 
 //====================================================
