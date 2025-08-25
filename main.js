@@ -1,7 +1,23 @@
 let linhaAtual = 0;
 let palavraAtual = [];
-const palavraSecreta = "CANTO";
 document.addEventListener("keydown", handler);
+
+let palavraSecreta = "";
+
+function buscarPalavraSecreta() {
+    fetch("http://localhost:3000/sortear")
+        .then(res => res.json())
+        .then(data => {
+            palavraSecreta = data.palavra;
+            console.log("Palavra sorteada:", palavraSecreta);
+        })
+        .catch(err => {
+            console.error("Erro ao buscar palavra secreta:", err);
+            mostrarMensagem("Erro ao iniciar o jogo.");
+        });
+}
+
+
 
 function fixarLinha(linha, palavra) {
     const celulas = document.getElementsByClassName("linha")[linha].getElementsByClassName("celula");
@@ -24,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     linhaAtual = 0;
     palavraAtual = [];
     mostrarMensagem("");
+    buscarPalavraSecreta();
 });
 
 //====================================================
@@ -34,13 +51,21 @@ function mostrarMensagem(texto, tipo = "info") {
     const msg = document.getElementById("mensagem");
     msg.textContent = texto;
     msg.className = tipo;
+    if (tipo !== "erro") {
+        setTimeout(() => {
+            msg.textContent = "";
+            msg.className = "";
+        }, 3000);
+    }
 }
 
 function handler(event) {
     const letra = event.key.toUpperCase();
 
     if (/^[A-Z]$/.test(letra)) {
-        
+        if (palavraAtual.length >= 5) {
+            return;
+        }
         console.log("Letra pressionada: ", letra);
         palavraAtual.push(letra);
         atualizarLinha();
@@ -56,20 +81,40 @@ function handler(event) {
         const palavraFixada = [...palavraAtual];
         fixarLinha(linhaAtual, palavraAtual); 
 
-        const resultado = validarPalpite(palavraFixada, palavraSecreta);
-        aplicarCoresNaLinha(linhaAtual, resultado);
-        
-        if (resultado.every(item => item === "certa")) {
-            mostrarMensagem("Parabéns! Você acertou!")
-            document.removeEventListener("keydown", handler)
-        }
+        const palavraTentada = palavraFixada.join("").toUpperCase();
 
-        linhaAtual++;
-        if (linhaAtual >= 6 && resultado.every(item => item != "certa")) {
-            mostrarMensagem(`Fim de jogo! A palavra era ${palavraSecreta}`);
-            return;
-        }
-        palavraAtual.length = 0;
+        fetch('http://localhost:3000/validar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ palavra: palavraTentada })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.valida) {
+                mostrarMensagem("Palavra inválida!");
+                return;
+            }
+
+            const resultado = validarPalpite(palavraFixada, palavraSecreta);
+            aplicarCoresNaLinha(linhaAtual, resultado);
+
+            if (resultado.every(item => item === "certa")) {
+                mostrarMensagem("Parabéns! Você acertou!");
+                document.removeEventListener("keydown", handler);
+            }
+
+            linhaAtual++;
+            if (linhaAtual >= 6 && resultado.every(item => item !== "certa")) {
+                mostrarMensagem(`Fim de jogo! A palavra era ${palavraSecreta}`);
+                document.removeEventListener("keydown", handler);
+            }
+
+            palavraAtual.length = 0;
+        })
+        .catch(err => {
+            console.error("Erro ao validar palavra:", err);
+            mostrarMensagem("Erro ao verificar a palavra.");
+        });
 
     } else if (letra === "BACKSPACE") {
         
