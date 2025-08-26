@@ -62,7 +62,7 @@ function mostrarMensagem(texto, tipo = "info") {
         setTimeout(() => {
             msg.textContent = "";
             msg.className = "";
-        }, 3000);
+        }, 7000);
     }
 }
 
@@ -111,7 +111,7 @@ function handler(event) {
             }
 
             linhaAtual++;
-            if (linhaAtual >= 6 && resultado.every(item => item !== "certa")) {
+            if (linhaAtual >= 6 && resultado.some(item => item !== "certa")) {
                 mostrarMensagem(`Fim de jogo! A palavra era ${palavraSecreta}`);
                 document.removeEventListener("keydown", handler);
             }

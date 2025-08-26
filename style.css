@@ -104,6 +104,6 @@ body {
 }
 
 .tecla.errada {
-    background-color: #3a3a3c;
-    color: white;
+    background-color: #3a3a3c46;
+    color: rgba(255, 255, 255, 0.247);
 }
