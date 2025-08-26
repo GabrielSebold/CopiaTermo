@@ -37,13 +37,13 @@ body {
 }
 
 .certa {
-  background-color: green;
-  border-color: green;
+  background-color: #538d4e;
+  border-color: #538d4e;
 }
 
 .quase {
-  background-color: goldenrod;
-  border-color: goldenrod;
+  background-color: #b59f3b;
+  border-color: #b59f3b;
 }
 
 .errada {
@@ -67,4 +67,43 @@ body {
 
 #mensagem.info {
   color: orange;
+}
+
+#teclado {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 500px;
+    margin: 20px auto;
+    justify-content: center;
+    gap: 6px;
+}
+
+.tecla {
+    width: 40px;
+    height: 50px;
+    background-color: #ccc;
+    color: #222;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: background-color 0.3s ease;
+}
+
+.tecla.certa {
+    background-color: #538d4e;
+    color: white;
+}
+
+.tecla.quase {
+    background-color: #b59f3b;
+    color: white;
+}
+
+.tecla.errada {
+    background-color: #3a3a3c;
+    color: white;
 }

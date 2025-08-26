@@ -4,6 +4,10 @@ document.addEventListener("keydown", handler);
 
 let palavraSecreta = "";
 
+//====================================================
+
+//====================================================
+
 function buscarPalavraSecreta() {
     fetch("http://localhost:3000/sortear")
         .then(res => res.json())
@@ -17,7 +21,9 @@ function buscarPalavraSecreta() {
         });
 }
 
+//====================================================
 
+//====================================================
 
 function fixarLinha(linha, palavra) {
     const celulas = document.getElementsByClassName("linha")[linha].getElementsByClassName("celula");
@@ -41,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     palavraAtual = [];
     mostrarMensagem("");
     buscarPalavraSecreta();
+    criarTeclado();
 });
 
 //====================================================
@@ -96,7 +103,7 @@ function handler(event) {
             }
 
             const resultado = validarPalpite(palavraFixada, palavraSecreta);
-            aplicarCoresNaLinha(linhaAtual, resultado);
+            aplicarCoresNaLinha(linhaAtual, resultado, palavraFixada);
 
             if (resultado.every(item => item === "certa")) {
                 mostrarMensagem("Parabéns! Você acertou!");
@@ -144,5 +151,23 @@ function criarGrid() {
         }
 
         grid.appendChild(linha);
+    }
+}
+
+//====================================================
+
+//====================================================
+
+function criarTeclado() {
+    const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const teclado = document.getElementById("teclado");
+    teclado.innerHTML = "";
+
+    for (let letra of letras) {
+        const tecla = document.createElement("div");
+        tecla.textContent = letra;
+        tecla.id = `tecla-${letra}`;
+        tecla.className = "tecla";
+        teclado.appendChild(tecla);
     }
 }
