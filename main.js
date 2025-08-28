@@ -3,6 +3,8 @@ let palavraAtual = [];
 document.addEventListener("keydown", handler);
 
 let palavraSecreta = "";
+let colunaAtiva = 0;
+let celulaAtiva = null;
 
 //====================================================
 
@@ -66,20 +68,152 @@ function mostrarMensagem(texto, tipo = "info") {
     }
 }
 
+function selecionarCelula(linha, coluna) {
+    if (linha !== linhaAtual) return;
+    if (celulaAtiva) {
+        celulaAtiva.classList.remove("ativo");
+    }
+    const celula = document.getElementsByClassName("linha")[linha].getElementsByClassName("celula")[coluna];
+    celula.classList.add("ativo");
+    celulaAtiva = celula;
+    colunaAtiva = coluna;
+}
+
 function handler(event) {
     const letra = event.key.toUpperCase();
 
-    if (/^[A-Z]$/.test(letra)) {
-        if (palavraAtual.length >= 5) {
-            return;
+    if (event.key === "ArrowRight") {
+        if (colunaAtiva < 4) {
+            selecionarCelula(linhaAtual, colunaAtiva + 1);
         }
-        console.log("Letra pressionada: ", letra);
-        palavraAtual.push(letra);
-        atualizarLinha();
+        return;
+    }
+    if (event.key === "ArrowLeft") {
+        if (colunaAtiva > 0) {
+            selecionarCelula(linhaAtual, colunaAtiva - 1);
+        }
+        return;
+    }
 
-    } else if (letra === "ENTER") {
-        
-        if (palavraAtual.length < 5) {
+    if (/^[A-Z]$/.test(letra)) {
+        if (colunaAtiva < 5) {
+            palavraAtual[colunaAtiva] = letra;
+            atualizarLinha();
+            if (colunaAtiva < 4) {
+                selecionarCelula(linhaAtual, colunaAtiva + 1);
+            }
+        }
+    }
+
+
+    else if (event.key === "Backspace") {
+        if (colunaAtiva >= 0) {
+            palavraAtual[colunaAtiva] = "";
+            atualizarLinha();
+
+            const letrasDepois = palavraAtual.slice(colunaAtiva + 1).some(l => l !== "");
+            if (!letrasDepois && colunaAtiva > 0) {
+                selecionarCelula(linhaAtual, colunaAtiva - 1);
+            }
+        }
+    }
+
+    else if (event.key === "Enter") {
+        enviarPalavra();
+    }
+}
+
+//====================================================
+
+//====================================================
+
+function criarGrid() {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    for (let i = 0; i < 6; i++) {
+        const linha = document.createElement("div");
+        linha.className = "linha";
+
+        for (let j = 0; j < 5; j++) {
+            const celula = document.createElement("div");
+            celula.className = "celula";
+            celula.addEventListener("click", () => selecionarCelula(i, j));
+            linha.appendChild(celula);
+        }
+
+        grid.appendChild(linha);
+    }
+}
+
+//====================================================
+
+//====================================================
+
+function criarTeclado() {
+    const linhas = [
+        "QWERTYUIOP",
+        "ASDFGHJKL",
+        "ZXCVBNM"
+    ];
+    const teclado = document.getElementById("teclado");
+    teclado.innerHTML = "";
+
+    linhas.forEach((linhaLetras, index) => {
+        const linhaDiv = document.createElement("div");
+        linhaDiv.className = "linha-teclado";
+
+        linhaLetras.split("").forEach(letra => {
+            const tecla = document.createElement("div");
+            tecla.textContent = letra;
+            tecla.id = `tecla-${letra}`;
+            tecla.className = "tecla";
+            tecla.addEventListener("click", () => inserirLetra(letra));
+            linhaDiv.appendChild(tecla);
+        });
+
+        if(index === linhas.length - 1){
+            const back = document.createElement("div");
+            back.textContent = "⌫";
+            back.className = "tecla tecla-grande";
+            back.addEventListener("click", apagarLetra);
+            linhaDiv.appendChild(back);
+
+            const enter = document.createElement("div");
+            enter.textContent = "ENTER";
+            enter.className = "tecla tecla-grande";
+            enter.addEventListener("click", enviarPalavra);
+            linhaDiv.appendChild(enter);
+        }
+
+        teclado.appendChild(linhaDiv);
+    });
+}
+
+
+
+function inserirLetra(letra) {
+    if (colunaAtiva < 5) {
+        palavraAtual[colunaAtiva] = letra;
+        atualizarLinha();
+        selecionarCelula(linhaAtual, colunaAtiva);
+        if(colunaAtiva < palavraAtual.length) {
+            colunaAtiva++;
+        }
+    }
+}
+
+function apagarLetra() {
+    if (colunaAtiva < palavraAtual.length) {
+        palavraAtual[colunaAtiva] = "";
+        atualizarLinha();
+        selecionarCelula(linhaAtual, colunaAtiva);
+    }
+}
+
+
+function enviarPalavra() {
+    if (palavraAtual.length < 5) {
             console.log("Palavra incompleta");
             return;
         }
@@ -104,6 +238,11 @@ function handler(event) {
 
             const resultado = validarPalpite(palavraFixada, palavraSecreta);
             aplicarCoresNaLinha(linhaAtual, resultado, palavraFixada);
+            if (celulaAtiva) {
+                celulaAtiva.classList.remove("ativo");
+                celulaAtiva = null;
+            }
+            colunaAtiva = 0;
 
             if (resultado.every(item => item === "certa")) {
                 mostrarMensagem("Parabéns! Você acertou!");
@@ -123,51 +262,13 @@ function handler(event) {
             mostrarMensagem("Erro ao verificar a palavra.");
         });
 
-    } else if (letra === "BACKSPACE") {
-        
-        console.log("Removeu uma letra.")
-        palavraAtual.pop();
-        atualizarLinha();
-
+    if(celulaAtiva) {
+        celulaAtiva.classList.remove("ativo");
+        celulaAtiva = null;
     }
-};
 
-//====================================================
-
-//====================================================
-
-function criarGrid() {
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
-
-    for (let i = 0; i < 6; i++) {
-        const linha = document.createElement("div");
-        linha.className = "linha";
-
-        for (let j = 0; j < 5; j++) {
-            const celula = document.createElement("div");
-            celula.className = "celula";
-            linha.appendChild(celula);
-        }
-
-        grid.appendChild(linha);
-    }
 }
 
 //====================================================
 
 //====================================================
-
-function criarTeclado() {
-    const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const teclado = document.getElementById("teclado");
-    teclado.innerHTML = "";
-
-    for (let letra of letras) {
-        const tecla = document.createElement("div");
-        tecla.textContent = letra;
-        tecla.id = `tecla-${letra}`;
-        tecla.className = "tecla";
-        teclado.appendChild(tecla);
-    }
-}
