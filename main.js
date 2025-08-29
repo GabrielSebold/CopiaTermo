@@ -107,15 +107,7 @@ function handler(event) {
 
 
     else if (event.key === "Backspace") {
-        if (colunaAtiva >= 0) {
-            palavraAtual[colunaAtiva] = "";
-            atualizarLinha();
-
-            const letrasDepois = palavraAtual.slice(colunaAtiva + 1).some(l => l !== "");
-            if (!letrasDepois && colunaAtiva > 0) {
-                selecionarCelula(linhaAtual, colunaAtiva - 1);
-            }
-        }
+        apagarLetra();
     }
 
     else if (event.key === "Enter") {
@@ -190,24 +182,30 @@ function criarTeclado() {
     });
 }
 
-
-
 function inserirLetra(letra) {
     if (colunaAtiva < 5) {
         palavraAtual[colunaAtiva] = letra;
         atualizarLinha();
+        colunaAtiva++;
         selecionarCelula(linhaAtual, colunaAtiva);
-        if(colunaAtiva < palavraAtual.length) {
-            colunaAtiva++;
-        }
     }
 }
 
+
 function apagarLetra() {
-    if (colunaAtiva < palavraAtual.length) {
-        palavraAtual[colunaAtiva] = "";
-        atualizarLinha();
-        selecionarCelula(linhaAtual, colunaAtiva);
+    if (colunaAtiva >= 0) {
+        if (palavraAtual[colunaAtiva] === "") {
+            if (colunaAtiva > 0) {
+                colunaAtiva--;
+                palavraAtual[colunaAtiva] = "";
+                atualizarLinha();
+                selecionarCelula(linhaAtual, colunaAtiva);
+            }
+        } else {
+            palavraAtual[colunaAtiva] = "";
+            atualizarLinha();
+            selecionarCelula(linhaAtual, colunaAtiva);
+        }
     }
 }
 
