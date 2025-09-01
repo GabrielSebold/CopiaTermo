@@ -1,3 +1,8 @@
+/*
+Para o funcionamento via localhost, é preciso rodar o palavra.js no terminal...
+Entra na pasta e digita "node palavra.js"
+*/
+
 let linhaAtual = 0;
 let palavraAtual = [];
 document.addEventListener("keydown", handler);
@@ -268,5 +273,6 @@ function enviarPalavra() {
 }
 
 //====================================================
+
 
 //====================================================
