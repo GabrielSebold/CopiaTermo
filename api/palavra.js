@@ -3,7 +3,16 @@ const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 
 const app = express();
-const db = new sqlite3.Database('C:/Users/Gabri/OneDrive/Área de Trabalho/CopiaTermo/Banco-SQL_Lite/palavras.db');
+/*
+OBS: Usei um arquivo de palavras que encontrei em um Redit aleatório...
+Vão ser somente palavras de 5 letras, mas pode haver algumas em inglês e
+como o banco de dados utilizado foi o SQLlite não consigo usar o comando 'unnacent'
+Logo palavras com acento não funcionam e podem ser sorteadas necessitando um refresh na página.
+Eu teria que ajustar o insert.js ou o filtrar-palavras.js, mas no mais o jogo funciona.
+*/
+
+//Antes de iniciar o arquivo adicione o diretório de palavras.db
+const db = new sqlite3.Database('Coloca o diretório aqui');
 
 app.use(cors());
 app.use(express.json());
